@@ -71,7 +71,6 @@ frame1.config(bg="white", width=width, height=height)
 bg_src = PhotoImage(file = f"{assets_path}/bg.png")
 label_bg = Label(frame1, image = bg_src)
 label_bg.place(x = 0, y = 0)
-label_bg.pack()
 
 #logo
 logo_min_src = PhotoImage(file = f"{assets_path}/logo_min.png")
