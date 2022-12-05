@@ -98,7 +98,19 @@ def search_film(search_base):
         result.append(search_per_score(search_base))
     return result
 
-
+def open_file(path):
+    file = open(path, "w", ecoding = "utf-8")
+    text = file.read().splitlines() 
+    l1 = []
+    for line in text:
+        l2 = []
+        text1 = line.split(",")
+    for item in text1:
+        if type(item) == str:
+            l2.append(item.replace('"', '').strip())
+        else:
+            l2.append(item)
+    return l1
 
 def save_files(films, genres):
     films_file = open("peliculas.csv", "w")
