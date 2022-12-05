@@ -14,7 +14,7 @@ def open_file(path):
         return l1
 
 
-#!
+#! paths
 films_path = "peliculas.csv"
 genres_path = "generos.csv"
 
@@ -22,12 +22,13 @@ films_list = open_file(films_path)
 genres_list =  open_file(genres_path)
 
 
+#beta
 def updateData():
     global films_list, genres_list
     films_list = open_file(films_path)
     genres_list =  open_file(genres_path)
     
-
+#for testing
 def getFilms():
     global films_list
     return films_list
@@ -99,7 +100,7 @@ def search_film(search_base):
     return result
 
 def open_file(path):
-    file = open(path, "w", ecoding = "utf-8")
+    file = open(path, "w", encoding = "utf-8")
     text = file.read().splitlines() 
     l1 = []
     for line in text:
@@ -113,13 +114,14 @@ def open_file(path):
     return l1
 
 def save_files(films, genres):
-    films_file = open("peliculas.csv", "w")
+    films_file = open(films_path, "w")
     films_file.write(films)
-    genres_files = open("generos.csv", "w")
+    genres_files = open(genres_path, "w")
     genres_files.write(genres)
     films_file.close()
     genres_files.close()
 
+#not yet done
 def onClose():
     #save_files(films_list, genres_list)
     print("cerrado")
