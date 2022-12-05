@@ -1,3 +1,53 @@
+def open_file(path):
+    with open(path, "r", encoding = "utf-8") as file:
+        text = file.read().splitlines()
+        l1 = []
+        for line in text:
+            l2 = []
+            text1 = line.split(",")
+            for item in text1:
+                if type(item) == str:
+                    l2.append(item.replace('"', '').strip())
+                else:
+                    l2.append(item)
+            l1.append(l2)
+        return l1
+
+
+#!
+films_path = "peliculas.csv"
+genres_path = "generos.csv"
+
+films_list = open_file(films_path)
+genres_list =  open_file(genres_path)
+
+
+def updateData():
+    global films_list, genres_list
+    films_list = open_file(films_path)
+    genres_list =  open_file(genres_path)
+    
+
+def getFilms():
+    global films_list
+    return films_list
+
+
+def validate_genre(genre):
+    pass
+
+def validate_year(year):
+    pass
+
+def validate_score(score):
+    pass
+
+def validate_repeat_film(name, director):
+    pass
+
+def validate_super_genre(super_genre):
+    pass
+
 def add_film(name, director, genre, year, score):
     global films_list
     x1 = validate_genre(genre)
@@ -28,6 +78,15 @@ def add_genre(name, super_genre):
     genres_list.append(genre) 
     return print("El género  se ha agregado exitosamente")
 
+def search_per_name_or_director(search_base):
+    pass
+
+def search_per_genre(genre):
+    pass
+
+def search_per_score(search_base):
+    pass
+
 def search_film(search_base):
     global films_list
     result = []
@@ -39,21 +98,9 @@ def search_film(search_base):
         result.append(search_per_score(search_base))
     return result
 
-def open_file(paht):
-    file = open(path, "w", ecoding = "utf-8")  #No estoy seguro si esta vien escrito path
-    #text ←(file.Leer()).Separarlineas()
-    l1 = []
-    for line in text:
-        l2 = []
-        text1 = line.split(",")
-    for item in text1:
-        if type(item) == str:
-            # l2.Agregar((item.Reemplazar(‘”’, ’’)).strip())
-        else:
-            l2.append(item)
-    return l1
 
-def save_files (films, genres):
+
+def save_files(films, genres):
     films_file = open("peliculas.csv", "w")
     films_file.write(films)
     genres_files = open("generos.csv", "w")
@@ -61,9 +108,7 @@ def save_files (films, genres):
     films_file.close()
     genres_files.close()
 
-def main():
-    films_list = open_file("peliculas.csv", "r")
-    genres_list =  open_file("generos.csv", "r")
+def onClose():
+    #save_files(films_list, genres_list)
+    print("cerrado")
 
-    #cuando el programa se cierre ejecutar save_files()
-    save_files(films_list, genres_list)
