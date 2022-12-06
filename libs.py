@@ -6,15 +6,15 @@ def open_file(path):
             l2 = []
             text1 = line.split(",")
             for item in text1:
-                if type(item) == str:
+                try:
+                    l2.append(int(item))
+                except ValueError:
                     l2.append(item.replace('"', '').strip())
-                else:
-                    l2.append(item)
             l1.append(l2)
         return l1
 
 
-#!
+#! paths
 films_path = "peliculas.csv"
 genres_path = "generos.csv"
 
@@ -22,16 +22,25 @@ films_list = open_file(films_path)
 genres_list =  open_file(genres_path)
 
 
+#beta
 def updateData():
     global films_list, genres_list
     films_list = open_file(films_path)
     genres_list =  open_file(genres_path)
     
-
+#for testing
 def getFilms():
     global films_list
-    return films_list
+    return films_list.copy()
 
+def getGenres():
+    global genres_list
+    return genres_list.copy()
+
+def getSuperGenre(genre):
+    for local_genre in genres_list.copy():
+        if(local_genre[0] == genre):
+            return local_genre[1]
 
 def validate_genre(genre):
     global genres_list
@@ -58,7 +67,11 @@ def validate_repeat_film(name, director):
     return False
 
 def validate_super_genre(super_genre):
-    pass
+    global genres_list
+    for i in range(len(genres_list)):
+        if genres_list[i][1] == super_genre:
+            return False
+    return True
 
 def add_film(name, director, genre, year, score):
     global films_list
@@ -90,49 +103,64 @@ def add_genre(name, super_genre):
     genres_list.append(genre) 
     return print("El género  se ha agregado exitosamente")
 
-def search_per_name_or_director(search_base):
-    pass
+def search_per_name_or_director(query):
+    results = []
+    for film in films_list.copy():
+        if(film[0].lower().find(query.lower()) != -1 or film[1].lower().find(query.lower()) != -1):
+            results.append(film)
+    return results
 
 def search_per_genre(genre):
-    pass
+    results = []
+    genres = []
+    for local_genre in genres_list.copy():
+        if(local_genre[0] not in genres):
+            genres.append(local_genre[0])
+        elif(local_genre[1] not in genres):
+            genres.append(local_genre[1])
 
-def search_per_score(search_base):
-    pass
+    for film in films_list.copy():
+        if(genre == "General"):
+            if(film[2] == genre):
+                results.append(film)
+        else:
+            if(film[2] == genre or film[2] == getSuperGenre(genre)):
+                results.append(film)
+    return results
 
-def search_film(search_base):
+def search_per_score(score):
+    global films_list
+    results = []
+
+    for film in films_list.copy():
+        if(score == film[4]):
+            results.append(film)
+
+    return results
+
+def search_film(filter, query, genre, score):
     global films_list
     result = []
-    if search_per_genre(search_base) not in result:
-        result.append(search_per_genre(search_base))
-    if search_per_name_or_director(search_base) != (([]) and ([[]])):
-        result.append(search_per_name_or_director(search_base))
-    if search_per_score(search_base) != (([]) and ([[]])) and ([[], []]):
-        result.append(search_per_score(search_base))
-    return result
 
-def open_file(path):
-    file = open(path, "w", ecoding = "utf-8")
-    text = file.read().splitlines() 
-    l1 = []
-    for line in text:
-        l2 = []
-        text1 = line.split(",")
-    for item in text1:
-        if type(item) == str:
-            l2.append(item.replace('"', '').strip())
-        else:
-            l2.append(item)
-    return l1
+    if filter == "Nombre o Director":
+        result.append(search_per_name_or_director(query))
+    elif filter == "Género":
+        result.append(search_per_genre(genre))
+    elif filter == "Puntuación":
+        result.append(search_per_score(score))
+    try: return result[0]
+    except: return films_list.copy()
+
 
 def save_files(films, genres):
-    films_file = open("peliculas.csv", "w")
+    films_file = open(films_path, "w")
     films_file.write(films)
-    genres_files = open("generos.csv", "w")
+    genres_files = open(genres_path, "w")
     genres_files.write(genres)
     films_file.close()
     genres_files.close()
 
+#not yet done
 def onClose():
     #save_files(films_list, genres_list)
     print("cerrado")
-
