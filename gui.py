@@ -14,6 +14,7 @@ first_frame = 1
 assets_path = "./assets"
 width = 800
 height = 480
+currentFrame = 1
 
 
 root = Tk()
@@ -47,6 +48,27 @@ def switchFrame(number):
     elif(number == 4):
         frame4.pack(fill='both', expand=1)
 
+# CAMBIO DE PESTAÑA
+
+def buttonFilm():
+    global currentFrame
+    currentFrame = 1
+    switchFrame(currentFrame)
+
+def buttonFilmRegister():
+    global currentFrame
+    currentFrame = 2
+    switchFrame(currentFrame)
+
+def buttonGenre():
+    global currentFrame
+    currentFrame = 3
+    switchFrame(currentFrame)
+
+def buttonGenreRegister():
+    global currentFrame
+    currentFrame = 4
+    switchFrame(currentFrame)
 
 #* FRAMES        
 """
@@ -105,11 +127,11 @@ label_h_logo = Label(frame1, image = line_h_src)
 label_h_logo.place(x = 0, y = 50)
 
 #botones ventanas
-button_1 = Button(frame1, text="Añadir Película", font=("Inter", 15), width=13, height=1, command=switchFrame(2))
+button_1 = Button(frame1, text="Añadir Película", font=("Inter", 15), width=13, height=1, command=buttonFilmRegister)
 button_1.place(x = 5, y = 60)
-button_2 = Button(frame1, text="Ver Géneros", font=("Inter", 15), width=13, height=1, command=switchFrame(3))
+button_2 = Button(frame1, text="Ver Géneros", font=("Inter", 15), width=13, height=1, command=buttonGenre)
 button_2.place(x = 5, y = 110)
-button_1 = Button(frame1, text="Añadir Género", font=("Inter", 15), width=13, height=1, command=switchFrame(4))
+button_1 = Button(frame1, text="Añadir Género", font=("Inter", 15), width=13, height=1, command=buttonGenreRegister)
 button_1.place(x = 5, y = 160)
  
 
@@ -215,21 +237,136 @@ filter.trace("w", search)
 """
 #frame2
 
+frame2.config(bg="white", width=width, height=height)
 
+# bg
+bg_src_1= PhotoImage(file=f"{assets_path}/bg.png")
+label_bg_1 = Label(frame2, image=bg_src)
+label_bg_1.place(x=0, y=0)
+
+# logo
+logo_min_src_1 = PhotoImage(file=f"{assets_path}/logo_min.png")
+label_logo_min_1 = Label(frame2, image=logo_min_src_1)
+label_logo_min_1.place(x=0, y=415)
+
+# texto ventana
+label_ventana_1 = Label(frame2, text="Ventanas: ", font=("Inter", 20))
+label_ventana_1.place(x=20, y=16)
+
+# line_v
+line_v_src_1 = PhotoImage(file=f"{assets_path}/line_v.png")
+label_v_logo_1 = Label(frame2, image=line_v_src_1)
+label_v_logo_1.place(x=160, y=0)
+
+# line_h
+line_h_src_1 = PhotoImage(file=f"{assets_path}/line_h.png")
+label_h_logo_1 = Label(frame2, image=line_h_src_1)
+label_h_logo_1.place(x=0, y=50)
+
+# botones ventanas
+button_1 = Button(frame2, text="Buscar Película", font=(
+    "Inter", 15), width=13, height=1, command=buttonFilm)
+button_1.place(x=5, y=60)
+button_2 = Button(frame2, text="Ver Géneros", font=(
+    "Inter", 15), width=13, height=1, command=buttonGenre)
+button_2.place(x=5, y=110)
+button_1 = Button(frame2, text="Añadir Género", font=(
+    "Inter", 15), width=13, height=1, command=buttonGenreRegister)
+button_1.place(x=5, y=160)
+
+# texto de registro de pélicula
+label_ventana_1 = Label(frame2, text="Registro de pélicula:", font=("Inter", 30))
+label_ventana_1.place(x=190, y=30)
+
+#nombre de pelicula
+label_ventana_1 = Label(frame2, text="Nombre de pelicula:", font=("Inter", 15))
+label_ventana_1.place(x=190, y=125)
+texto_1 = tk.Text(frame2, width=25, height=1, font=("Inter", 15))
+texto_1.place(x=450, y=125)
+
+
+#nombre del director
+label_ventana_1 = Label(frame2, text="Nombre del director:", font=("Inter", 15))
+label_ventana_1.place(x=190, y=175)
+texto_1 = tk.Text(frame2, width=25, height=1, font=("Inter", 15))
+texto_1.place(x=450, y=175)
+
+#Género
+label_ventana_1 = Label(frame2, text="Género:", font=("Inter", 15))
+label_ventana_1.place(x=190, y=225)
+
+#año
+label_ventana_1 = Label(frame2, text="Año:", font=("Inter", 15))
+label_ventana_1.place(x=190, y=275)
+texto_1 = tk.Text(frame2, width=10, height=1, font=("Inter", 15))
+texto_1.place(x=530, y=275)
+
+#valoracion
+label_ventana_1 = Label(frame2, text="Valoracion:", font=("Inter", 15))
+label_ventana_1.place(x=190, y=355)
+combo_1 = ttk.Combobox(frame2, width=10, height=1,  font=("Inter", 15),
+    values=["1", "2", "3", "4","5"],
+)
+combo_1.place(x=521, y=355)
+
+#agregar pelicula
+button_1 = Button(frame2, text="Agregar pelicula", font=("Inter", 15), width=13, height=1)
+button_1.place(x=510, y=398)
 
 """
 ! GENRES FRAME
 """
 #frame3
 
+frame3.config(bg="white", width=width, height=height)
 
+# bg
+bg_src_2 = PhotoImage(file=f"{assets_path}/bg.png")
+label_bg_2 = Label(frame3, image=bg_src_2)
+label_bg_2.place(x=0, y=0)
+
+# logo
+logo_min_src_2 = PhotoImage(file=f"{assets_path}/logo_min.png")
+label_logo_min_2 = Label(frame3, image=logo_min_src_2)
+label_logo_min_2.place(x=0, y=415)
+
+# texto ventana
+label_ventana_2 = Label(frame3, text="Ventanas: ", font=("Inter", 20))
+label_ventana_2.place(x=20, y=16)
+
+# line_v
+line_v_src_2 = PhotoImage(file=f"{assets_path}/line_v.png")
+label_v_logo_2 = Label(frame3, image=line_v_src_2)
+label_v_logo_2.place(x=160, y=0)
+
+# line_h
+line_h_src_2 = PhotoImage(file=f"{assets_path}/line_h.png")
+label_h_logo_2= Label(frame3, image=line_h_src_2)
+label_h_logo_2.place(x=0, y=50)
+
+# botones ventanas
+button_1 = Button(frame3, text="Añadir Género", font=(
+    "Inter", 15), width=13, height=1, command=buttonGenreRegister)
+button_1.place(x=5, y=60)
+button_2 = Button(frame3, text="Buscar Pélicula", font=(
+    "Inter", 15), width=13, height=1, command=buttonFilm)
+button_2.place(x=5, y=110)
+button_1 = Button(frame3, text="Añadir Pélicula", font=(
+    "Inter", 15), width=13, height=1, command=buttonFilmRegister)
+button_1.place(x=5, y=160)
+
+# texto de registro de pélicula
+label_ventana_2 = Label(frame3, text="Géneros:", font=("Inter", 30))
+label_ventana_2.place(x=190, y=30)
+
+#texto
+texto_2 = tk.Text(frame3, width=50, height=12, font=("Inter", 15))
+texto_2.place(x=190, y=100)
 
 """
 ! GENRES REGISTER FRAME
 """
 #frame4
-
-
 
 
 """
