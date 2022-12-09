@@ -1,6 +1,6 @@
 from pathlib import Path
 import tkinter as tk
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Frame, ttk, Label, StringVar, IntVar, Radiobutton, OptionMenu, Listbox
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Frame, ttk, Label, StringVar, IntVar, OptionMenu, Listbox, messagebox, BooleanVar
 import time
 import threading
 import libs
@@ -16,6 +16,14 @@ width = 800
 height = 480
 currentFrame = 1
 
+"""
+! Frame Numbers
+? 0 = Loading Page
+? 1 = Films
+? 2 = Film Register
+? 3 = Genres
+? 4 = Genre Register  
+"""
 
 root = Tk()
 root.title(title)
@@ -27,6 +35,12 @@ frame2 = Frame(root)
 frame3 = Frame(root)
 frame4 = Frame(root)
 
+#! GLOBAL VARIABLES
+films_list = []
+genres_list = []
+
+films_list = libs.getFilms()
+genres_list = libs.getGenres()
 
 def clearFrames():
     frame0.pack_forget()
@@ -77,9 +91,11 @@ def buttonGenreRegister():
 frame0.config(width=width, height=height)
         
 #bg
+"""
 bg_src = PhotoImage(file = f"{assets_path}/bg.png")
-label_bg = Label(frame0, image = bg_src, width=width, height=height)
+label_bg = Label(frame0, image = bg_src)
 label_bg.place(x = 0, y = 0)
+"""
 
 #logo
 logo_src = PhotoImage(file = f"{assets_path}/logo.png")
@@ -93,6 +109,17 @@ label_u_logo.place(x = 0, y = 0)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 """
 ! FILMS FRAME
 """
@@ -100,7 +127,7 @@ label_u_logo.place(x = 0, y = 0)
 #item = tree_view.insert("", tk.END, text="Elemento 1")
 #tree_view.insert(item, tk.END, text="Sub-elemento 1")
 #tree_view.pack()
-frame1.config(bg="white", width=width, height=height)
+frame1.config(width=width, height=height)
 
 #bg
 bg_src = PhotoImage(file = f"{assets_path}/bg.png")
@@ -114,7 +141,7 @@ label_logo_min.place(x = 0, y = 415)
 
 #texto ventana
 label_ventana = Label(frame1, text="Ventanas:", font=("Inter", 20))
-label_ventana.place(x = 20, y = 16)
+label_ventana.place(x = 20, y = 8)
 
 #line_v
 line_v_src = PhotoImage(file = f"{assets_path}/line_v.png")
@@ -131,8 +158,8 @@ button_1 = Button(frame1, text="Añadir Película", font=("Inter", 15), width=13
 button_1.place(x = 5, y = 60)
 button_2 = Button(frame1, text="Ver Géneros", font=("Inter", 15), width=13, height=1, command=buttonGenre)
 button_2.place(x = 5, y = 110)
-button_1 = Button(frame1, text="Añadir Género", font=("Inter", 15), width=13, height=1, command=buttonGenreRegister)
-button_1.place(x = 5, y = 160)
+button_3 = Button(frame1, text="Añadir Género", font=("Inter", 15), width=13, height=1, command=buttonGenreRegister)
+button_3.place(x = 5, y = 160)
  
 
 #texto búsqueda de películas
@@ -147,37 +174,37 @@ genre = StringVar();genre.set("Géneros")
 
 genres = []
 
-searched_films_list = []
-searched_films = StringVar(value=searched_films_list)
+result_films_list = []
+searched_films = StringVar(value=result_films_list)
 
 #for the first exc and cpu optimization, prevent loop
 tempQuery = "first exc"
 tempScore = 0
 def search(*args):
     global tempQuery
-    global searched_films_list
-    global genres
+    global films_list
+    global result_films_list
 
     if(score.get() != 0): pass
     elif(tempQuery == query.get()): return
 
-    films_list = libs.search_film(filter.get(), query.get(), genre.get(), score.get())
+    searched_films_list = libs.search_film(films_list, genres_list, filter.get(), query.get(), genre.get(), score.get())
     tempQuery = query.get()
     
-    if len(films_list) < 1: print("vacío")
-    if len(searched_films_list) > 0: searched_films_list = []
+    if len(searched_films_list) < 1: print("vacío")
+    if len(result_films_list) > 0: result_films_list = []
 
-    for i in range(len(films_list)):    
-        searched_films_list.append(f"{i + 1}.- {films_list[i][0]}, {films_list[i][1]}, {films_list[i][2]}, {films_list[i][3]}, {films_list[i][4]}.")
+    for i in range(len(searched_films_list)):    
+        result_films_list.append(f"{i + 1}.- {searched_films_list[i][0]}, {searched_films_list[i][1]}, {searched_films_list[i][2]}, {searched_films_list[i][3]}, {searched_films_list[i][4]}.")
 
-    searched_films.set(searched_films_list)
+    searched_films.set(result_films_list)
     print(filter.get(), query.get(), genre.get(), score.get())
 
 #! OnInit
 search()
 
 #entry film
-entry_film = Entry(frame1, textvariable=query ,bd=4, font=("Inter"), justify="left", width=50)
+entry_film = Entry(frame1, textvariable=query , bd=4, font=("Inter"), justify="left", width=50)
 entry_film.place(x = 190, y = 100)
 query.trace("w", search)
 
@@ -187,8 +214,8 @@ print(searched_films.get())
 list_box.place(x = 190, y = 165, relwidth=0.575, relheight=0.5)
 
 #texto filtro
-label_filtro = Label(frame1, text="Buscar por:", font=("Inter", 15), justify="center")
-label_filtro.place(x = 660, y = 165)
+label_filter = Label(frame1, text="Buscar por:", font=("Inter", 15), justify="center")
+label_filter.place(x = 660, y = 165)
 
 #option menu score
 score_options = [1, 2, 3, 4 , 5]
@@ -197,8 +224,8 @@ score.trace("w", search)
 
 #option menu genre 
 #? Map genres
-genres_list = libs.getGenres()
 for i in range(len(genres_list)):
+    #elif for just see sub-genres (NOT GENERAL)
     if(genres_list[i][0] not in genres):
         genres.append(genres_list[i][0])
     elif(genres_list[i][1] not in genres):
@@ -212,12 +239,12 @@ def onChangeFilter(value):
     if(value == "filtro"):
         return
     else:
-        if(value in filter_options and op_menu_genre.winfo_ismapped()):
+        if(value in filter_options and op_menu_genre.winfo_ismapped() and value != "Género"):
             op_menu_genre.place_forget()
         elif(value == "Género"):
             genre.set("Géneros")
             op_menu_genre.place(x = 660, y = 300)
-        if(value in filter_options and op_menu_score.winfo_ismapped()):
+        if(value in filter_options and op_menu_score.winfo_ismapped() and value != "Puntuación"):
             op_menu_score.place_forget()
         elif(value == "Puntuación"):
             score.set(1)
@@ -232,155 +259,265 @@ filter.trace("w", search)
 
 
 
+
+
+
+
+
+
+
+
+
 """
 ! FILMS REGISTER FRAME
 """
 #frame2
-
-frame2.config(bg="white", width=width, height=height)
+frame2.config(width=width, height=height)
 
 # bg
-bg_src_1= PhotoImage(file=f"{assets_path}/bg.png")
-label_bg_1 = Label(frame2, image=bg_src)
-label_bg_1.place(x=0, y=0)
+label_bg_2 = Label(frame2, image=bg_src)
+label_bg_2.place(x=0, y=0)
 
 # logo
-logo_min_src_1 = PhotoImage(file=f"{assets_path}/logo_min.png")
-label_logo_min_1 = Label(frame2, image=logo_min_src_1)
-label_logo_min_1.place(x=0, y=415)
+label_logo_min_2 = Label(frame2, image=logo_min_src)
+label_logo_min_2.place(x=0, y=415)
 
-# texto ventana
-label_ventana_1 = Label(frame2, text="Ventanas: ", font=("Inter", 20))
-label_ventana_1.place(x=20, y=16)
+# text window
+label_window_2 = Label(frame2, text="Ventanas:", font=("Inter", 20))
+label_window_2.place(x=20, y=8)
 
 # line_v
-line_v_src_1 = PhotoImage(file=f"{assets_path}/line_v.png")
-label_v_logo_1 = Label(frame2, image=line_v_src_1)
-label_v_logo_1.place(x=160, y=0)
+label_v_logo_2 = Label(frame2, image=line_v_src)
+label_v_logo_2.place(x=160, y=0)
 
 # line_h
-line_h_src_1 = PhotoImage(file=f"{assets_path}/line_h.png")
-label_h_logo_1 = Label(frame2, image=line_h_src_1)
-label_h_logo_1.place(x=0, y=50)
+label_h_logo_2 = Label(frame2, image=line_h_src)
+label_h_logo_2.place(x=0, y=50)
 
-# botones ventanas
+# window buttons
 button_1 = Button(frame2, text="Buscar Película", font=(
     "Inter", 15), width=13, height=1, command=buttonFilm)
 button_1.place(x=5, y=60)
 button_2 = Button(frame2, text="Ver Géneros", font=(
     "Inter", 15), width=13, height=1, command=buttonGenre)
 button_2.place(x=5, y=110)
-button_1 = Button(frame2, text="Añadir Género", font=(
+button_3 = Button(frame2, text="Añadir Género", font=(
     "Inter", 15), width=13, height=1, command=buttonGenreRegister)
-button_1.place(x=5, y=160)
+button_3.place(x=5, y=160)
 
-# texto de registro de pélicula
-label_ventana_1 = Label(frame2, text="Registro de pélicula:", font=("Inter", 30))
-label_ventana_1.place(x=190, y=30)
+# text film register
+label_register_2 = Label(frame2, text="Registro de película:", font=("Inter", 30))
+label_register_2.place(x=190, y=30)
 
-#nombre de pelicula
-label_ventana_1 = Label(frame2, text="Nombre de pelicula:", font=("Inter", 15))
-label_ventana_1.place(x=190, y=125)
-texto_1 = tk.Text(frame2, width=25, height=1, font=("Inter", 15))
-texto_1.place(x=450, y=125)
+#!Variables
+film_name_2 = StringVar()
+director_name_2 = StringVar()
+genre_2 = StringVar();genre_2.set("Géneros")
+year_2 = IntVar()
+score_2 = IntVar();score_2.set(1)
+
+genres_2 = []
 
 
-#nombre del director
-label_ventana_1 = Label(frame2, text="Nombre del director:", font=("Inter", 15))
-label_ventana_1.place(x=190, y=175)
-texto_1 = tk.Text(frame2, width=25, height=1, font=("Inter", 15))
-texto_1.place(x=450, y=175)
+# text film name
+label_film_2 = Label(frame2, text="Nombre de película:", font=("Inter", 15))
+label_film_2.place(x=190, y=125)
+# entry film name 
+entry_film_2 = Entry(frame2, textvariable=film_name_2 , bd=4, font=("Inter"), justify="center", width=25)
+entry_film_2.place(x=450, y=125)
 
-#Género
-label_ventana_1 = Label(frame2, text="Género:", font=("Inter", 15))
-label_ventana_1.place(x=190, y=225)
+# text director name
+label_director_2 = Label(frame2, text="Nombre del director:", font=("Inter", 15))
+label_director_2.place(x=190, y=175)
+# entry director name
+entry_director_2 = Entry(frame2, textvariable=director_name_2 , bd=4, font=("Inter"), justify="center", width=25)
+entry_director_2.place(x=450, y=175)
 
-#año
-label_ventana_1 = Label(frame2, text="Año:", font=("Inter", 15))
-label_ventana_1.place(x=190, y=275)
-texto_1 = tk.Text(frame2, width=10, height=1, font=("Inter", 15))
-texto_1.place(x=530, y=275)
+# text genre
+label_genre_2 = Label(frame2, text="Género:", font=("Inter", 15))
+label_genre_2.place(x=190, y=225)
+#? Map genres
+for i in range(len(genres_list)):
+    #elif for just see sub-genres (NOT GENERAL)
+    if(genres_list[i][0] not in genres_2):
+        genres_2.append(genres_list[i][0])
+    elif(genres_list[i][1] not in genres_2):
+        genres_2.append(genres_list[i][1])
+op_menu_genre_2 = OptionMenu(frame2, genre_2, *(genres_2))
+op_menu_genre_2.place(x = 540, y = 225)
 
-#valoracion
-label_ventana_1 = Label(frame2, text="Valoracion:", font=("Inter", 15))
-label_ventana_1.place(x=190, y=355)
-combo_1 = ttk.Combobox(frame2, width=10, height=1,  font=("Inter", 15),
-    values=["1", "2", "3", "4","5"],
-)
-combo_1.place(x=521, y=355)
+# text year
+label_year_2 = Label(frame2, text="Año:", font=("Inter", 15))
+label_year_2.place(x=190, y=275)
+#entry year
+entry_year_2 = Entry(frame2, textvariable=year_2 , bd=4, font=("Inter"), justify="center", width=12)
+entry_year_2.place(x=530, y=275)
+once = True
+def yearLength(*args):
+    global once
 
-#agregar pelicula
-button_1 = Button(frame2, text="Agregar pelicula", font=("Inter", 15), width=13, height=1)
-button_1.place(x=510, y=398)
+    # validate just numbers
+    if(not entry_year_2.get().isnumeric()):
+        entry_year_2.delete(len(entry_year_2.get()) - 1, len(entry_year_2.get()))
+    elif(once):
+        entry_director_2.setvar(entry_director_2.get())
+        #entry_director_2.delete(0, 2)
+        once = False
+    elif len(entry_year_2.get()) > 4:
+        entry_year_2.delete(4, 5)
+
+    if(entry_year_2.get() == ""): pass
+    elif(len(entry_year_2.get()) == 4 and not libs.validate_year(year_2.get())): 
+        messagebox.showerror("Dato inválido", f"El año debe estar entre 1895 y {libs.getYear()}")
+year_2.trace("w", yearLength)
+
+# text score
+label_score_2 = Label(frame2, text="Valoración:", font=("Inter", 15))
+label_score_2.place(x=190, y=325)
+#option menu score 1
+score_options_2 = [1, 2, 3, 4 , 5]
+op_menu_score_2 = OptionMenu(frame2, score_2, *(score_options_2))
+op_menu_score_2.place(x = 560, y = 325)
+
+# On Press Button Add Film
+def buttonAddFilm():
+    global films_list, genres_list, film_name_2, director_name_2, genre_2, year_2, score_2 
+    res = libs.add_film(films_list.copy(), genres_list.copy(), film_name_2.get(), director_name_2.get(), genre_2.get(), year_2.get(), score_2.get())
+    if(type(res) == tuple):
+        messagebox.showerror("Error", res[1])
+    else:
+        films_list = res
+        messagebox.showinfo("Mensaje", "La película se ha agregado correctamente.")
+        
+    # for update data in Search Films Frame
+    search()
+    
+
+
+#add film
+button_add_film_2 = Button(frame2, text="Agregar película", font=("Inter", 15), width=13, height=1, command=buttonAddFilm)
+button_add_film_2.place(x=510, y=398)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 """
 ! GENRES FRAME
 """
 #frame3
-
-frame3.config(bg="white", width=width, height=height)
+frame3.config(width=width, height=height)
 
 # bg
-bg_src_2 = PhotoImage(file=f"{assets_path}/bg.png")
-label_bg_2 = Label(frame3, image=bg_src_2)
-label_bg_2.place(x=0, y=0)
+label_bg_3 = Label(frame3, image=bg_src)
+label_bg_3.place(x=0, y=0)
 
 # logo
-logo_min_src_2 = PhotoImage(file=f"{assets_path}/logo_min.png")
-label_logo_min_2 = Label(frame3, image=logo_min_src_2)
-label_logo_min_2.place(x=0, y=415)
+label_logo_min_3 = Label(frame3, image=logo_min_src)
+label_logo_min_3.place(x=0, y=415)
 
-# texto ventana
-label_ventana_2 = Label(frame3, text="Ventanas: ", font=("Inter", 20))
-label_ventana_2.place(x=20, y=16)
+# text window
+label_window_3 = Label(frame3, text="Ventanas:", font=("Inter", 20))
+label_window_3.place(x=20, y=8)
 
 # line_v
-line_v_src_2 = PhotoImage(file=f"{assets_path}/line_v.png")
-label_v_logo_2 = Label(frame3, image=line_v_src_2)
-label_v_logo_2.place(x=160, y=0)
+label_v_logo_3 = Label(frame3, image=line_v_src)
+label_v_logo_3.place(x=160, y=0)
 
 # line_h
-line_h_src_2 = PhotoImage(file=f"{assets_path}/line_h.png")
-label_h_logo_2= Label(frame3, image=line_h_src_2)
-label_h_logo_2.place(x=0, y=50)
+label_h_logo_3= Label(frame3, image=line_h_src)
+label_h_logo_3.place(x=0, y=50)
 
-# botones ventanas
+# window buttons
 button_1 = Button(frame3, text="Añadir Género", font=(
     "Inter", 15), width=13, height=1, command=buttonGenreRegister)
 button_1.place(x=5, y=60)
 button_2 = Button(frame3, text="Buscar Pélicula", font=(
     "Inter", 15), width=13, height=1, command=buttonFilm)
 button_2.place(x=5, y=110)
-button_1 = Button(frame3, text="Añadir Pélicula", font=(
+button_3 = Button(frame3, text="Añadir Pélicula", font=(
     "Inter", 15), width=13, height=1, command=buttonFilmRegister)
-button_1.place(x=5, y=160)
+button_3.place(x=5, y=160)
 
-# texto de registro de pélicula
-label_ventana_2 = Label(frame3, text="Géneros:", font=("Inter", 30))
-label_ventana_2.place(x=190, y=30)
+# text film register
+label_register_3 = Label(frame3, text="Géneros:", font=("Inter", 30))
+label_register_3.place(x=190, y=30)
 
-#texto
-texto_2 = tk.Text(frame3, width=50, height=12, font=("Inter", 15))
+# text
+"""
+texto_2 = Text(frame3, width=50, height=12, font=("Inter", 15))
 texto_2.place(x=190, y=100)
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 """
 ! GENRES REGISTER FRAME
 """
 #frame4
+frame4.config(width=width, height=height)
 
 
-"""
-? Frame Numbers
-0 = Loading Page
-1 = Films
-2 = Film Register
-3 = Genres
-4 = Genre Register  
-"""
+# bg
+label_bg_4 = Label(frame4, image=bg_src)
+label_bg_4.place(x=0, y=0)
+
+# logo
+label_logo_min_4 = Label(frame4, image=logo_min_src)
+label_logo_min_4.place(x=0, y=415)
+
+# texto ventana
+label_window_4 = Label(frame4, text="Ventanas:", font=("Inter", 20))
+label_window_4.place(x=20, y=8)
+
+# line_v
+label_v_logo_4 = Label(frame4, image=line_v_src)
+label_v_logo_4.place(x=160, y=0)
+
+# line_h
+label_h_logo_4= Label(frame4, image=line_h_src)
+label_h_logo_4.place(x=0, y=50)
+
+# botones ventanas
+button_1 = Button(frame4, text="Ver Géneros", font=(
+    "Inter", 15), width=13, height=1, command=buttonGenre)
+button_1.place(x=5, y=60)
+button_2 = Button(frame4, text="Buscar Pélicula", font=(
+    "Inter", 15), width=13, height=1, command=buttonFilm)
+button_2.place(x=5, y=110)
+button_3 = Button(frame4, text="Añadir Pélicula", font=(
+    "Inter", 15), width=13, height=1, command=buttonFilmRegister)
+button_3.place(x=5, y=160)
+
+
+
+
+
 
 def waiting(frame, s):
     time.sleep(s)
     switchFrame(frame)
+
 
 def loading(ff, sf, s):
     #ff = first frame
