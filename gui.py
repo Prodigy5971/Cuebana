@@ -536,6 +536,53 @@ button_3 = Button(frame4, text="Añadir Pélicula", font=(
     "Inter", 15), width=13, height=1, command=buttonFilmRegister)
 button_3.place(x=5, y=160)
 
+#Texto de registro
+label_register_4 = Label(frame4, text="Registro de Géneros:", font=("Inter", 30))
+label_register_4.place(x=190, y=30)
+
+# Variables
+genre_4 = StringVar();genre_4.set("Géneros")
+subgenre_name_4 = StringVar()
+
+genres_4 = []
+
+# text genre
+label_genre_4 = Label(frame4, text="Genero al que pertenece:", font=("Inter", 15))
+label_genre_4.place(x=190, y=125)
+#? Map genres
+for i in range(len(genres_list)):
+    #elif for just see sub-genres (NOT GENERAL)
+    if (genres_list[i][0] not in genres_4):
+        genres_4.append(genres_list[i][0])
+    elif (genres_list[i][1] not in genres_4):
+        genres_4.append(genres_list[i][1])
+op_menu_genre_4 = OptionMenu(frame4, genre_4, *(genres_4))
+op_menu_genre_4.place(x = 550, y = 125)
+
+#texto del subgenre
+label_subgenres_4 = Label(frame4, text="Nombre del sub genero:", font=("Inter", 15))
+label_subgenres_4.place(x=190, y=190)
+entry_subgenres_2 = Entry(frame4, textvariable=subgenre_name_4 , bd=4, font=("Inter"), justify="center", width=25)
+entry_subgenres_2.place(x=450, y=190)
+
+# On Press Button Add genre
+def buttonAddgenres():
+    global  genres_list, genre_4, subgenre_name_4
+    res_4 = libs.add_genre(genres_list.copy(), genre_4.get(), subgenre_name_4.get())
+    if (type(res_4) == tuple):
+        messagebox.showerror("Error", res_4[1])
+    else:
+        genres_list = res_4
+        messagebox.showinfo("Mensaje", "El genero se ha agregado correctamente.")
+
+    
+    search()
+
+#add genre
+button_add_film_2 = Button(frame4, text="Agregar genero", font=("Inter", 15), width=13, height=1, command=buttonAddgenres)
+button_add_film_2.place(x=468, y=272)
+
+
 
 
 
