@@ -198,7 +198,7 @@ query.trace("w", search)
 
 #films
 list_box = Listbox(frame1, listvariable=searched_films)
-print(searched_films.get())
+#print(searched_films.get())
 list_box.place(x = 190, y = 165, relwidth=0.575, relheight=0.5)
 
 #texto filtro
@@ -605,7 +605,7 @@ def genreType(*args):
     elif (entry_sub_genres_4.get()[len(entry_sub_genres_4.get()) - 1] == " "): pass
     elif (not entry_sub_genres_4.get().isalpha()):
         entry_sub_genres_4.delete(len(entry_sub_genres_4.get()) - 1, len(entry_sub_genres_4.get()))
-        
+
 sub_genre_name_4.trace("w", genreType)
 
 

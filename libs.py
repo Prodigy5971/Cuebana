@@ -86,7 +86,7 @@ def add_film(*args):
     #films_list, genres_list, name, director, genre, year, score 
     args_keys = ("films_list", "genres_list", "Nombre de Película", "Nombre del Director", "Género", "Año", "")
     films_list = args[0]; genres_list = args[1]; name = args[2].strip(); director = args[3].strip(); genre = args[4]; year = args[5]; score = args[6]
-    print("genre:", genre, "score:", score)
+    #print("genre:", genre, "score:", score)
     for i in range(2, len(args)-2):
         if(type(args[i]) == str and (len(args[i]) == 0 or args[i].isspace())):
             if(args_keys[i] == "Género"):
