@@ -15,6 +15,7 @@ assets_path = "./assets"
 width = 800
 height = 480
 currentFrame = 1
+father_genre = "General"
 
 """
 ! Frame Numbers
@@ -39,8 +40,8 @@ frame4 = Frame(root)
 films_list = []
 genres_list = []
 
-films_list = libs.getFilms()
-genres_list = libs.getGenres()
+films_list = libs.getFilms(messagebox)
+genres_list = libs.getGenres(messagebox)
 
 def clearFrames():
     frame0.pack_forget()
@@ -89,13 +90,6 @@ def buttonGenreRegister():
 ! LOADING FRAME
 """
 frame0.config(width=width, height=height)
-        
-#bg
-"""
-bg_src = PhotoImage(file = f"{assets_path}/bg.png")
-label_bg = Label(frame0, image = bg_src)
-label_bg.place(x = 0, y = 0)
-"""
 
 #logo
 logo_src = PhotoImage(file = f"{assets_path}/logo.png")
@@ -168,8 +162,6 @@ score = IntVar();score.set(1)
 filter = StringVar();filter.set("Filtros")
 genre = StringVar();genre.set("Géneros")
 
-genres = []
-
 result_films_list = []
 searched_films = StringVar(value=result_films_list)
 
@@ -187,14 +179,14 @@ def search(*args):
     searched_films_list = libs.search_film(films_list, genres_list, filter.get(), query.get(), genre.get(), score.get())
     tempQuery = query.get()
     
-    if len(searched_films_list) < 1: print("vacío")
+    if len(searched_films_list) < 1: pass#print("vacío")
     if len(result_films_list) > 0: result_films_list = []
 
     for i in range(len(searched_films_list)):    
         result_films_list.append(f"{i + 1}.- {searched_films_list[i][0]}, {searched_films_list[i][1]}, {searched_films_list[i][2]}, {searched_films_list[i][3]}, {searched_films_list[i][4]}.")
 
     searched_films.set(result_films_list)
-    print(filter.get(), query.get(), genre.get(), score.get())
+    #print(filter.get(), query.get(), genre.get(), score.get())
 
 #! OnInit
 search()
@@ -220,15 +212,30 @@ score.trace("w", search)
 
 #option menu genre 
 #? Map genres
+genres = []
 for i in range(len(genres_list)):
-    #elif for just see sub-genres (NOT GENERAL)
     if (genres_list[i][0] not in genres):
         genres.append(genres_list[i][0])
     elif (genres_list[i][1] not in genres):
         genres.append(genres_list[i][1])
 
+
+def mapGenre1():
+    global op_menu_genre, genre, genres 
+    genres_local = []
+    for i in range(len(genres_list)):
+        if (genres_list[i][0] not in genres_local):
+            genres_local.append(genres_list[i][0])
+        elif (genres_list[i][1] not in genres_local):
+            genres_local.append(genres_list[i][1])
+    op_menu_genre.place_forget()
+    op_menu_genre = OptionMenu(frame1, genre, *(genres_local))
+    if(op_menu_genre.winfo_ismapped()):
+        genre.set("Géneros")
+        op_menu_genre.place(x = 660, y = 300)
 op_menu_genre = OptionMenu(frame1, genre, *(genres))
 genre.trace("w", search)
+
 
 filter_options = ["Nombre o Director", "Género", "Puntuación"]
 def onChangeFilter(value):
@@ -332,15 +339,31 @@ entry_director_2.place(x=450, y=175)
 # text genre
 label_genre_2 = Label(frame2, text="Género:", font=("Inter", 15))
 label_genre_2.place(x=190, y=225)
-#? Map genres
+
+temp_genres_2 = []
 for i in range(len(genres_list)):
-    #elif for just see sub-genres (NOT GENERAL)
-    if (genres_list[i][0] not in genres_2):
-        genres_2.append(genres_list[i][0])
-    elif (genres_list[i][1] not in genres_2):
-        genres_2.append(genres_list[i][1])
-op_menu_genre_2 = OptionMenu(frame2, genre_2, *(genres_2))
+    if (genres_list[i][0] not in temp_genres_2):
+        temp_genres_2.append(genres_list[i][0])
+    if (genres_list[i][1] not in temp_genres_2 and genres_list[i][1] != father_genre):
+        temp_genres_2.append(genres_list[i][1])
+op_menu_genre_2 = OptionMenu(frame2, genre_2, *(temp_genres_2))
 op_menu_genre_2.place(x = 540, y = 225)
+
+#? Map genres
+def mapGenre2():
+    global genres_list, op_menu_genre_2, genre_2
+    genres_local = []
+    for i in range(len(genres_list)):
+        #if for just see genres (NOT GENERAL)
+        if(genres_list[i][0] not in genres_local):
+            genres_local.append(genres_list[i][0])
+        if (genres_list[i][1] not in genres_local and genres_list[i][1] != father_genre):
+            genres_local.append(genres_list[i][1])
+
+    op_menu_genre_2.place_forget()
+    op_menu_genre_2 = OptionMenu(frame2, genre_2, *(genres_local))
+    op_menu_genre_2.place(x = 540, y = 225)
+
 
 # text year
 label_year_2 = Label(frame2, text="Año:", font=("Inter", 15))
@@ -349,9 +372,9 @@ label_year_2.place(x=190, y=275)
 entry_year_2 = Entry(frame2, textvariable=year_2 , bd=4, font=("Inter"), justify="center", width=12)
 entry_year_2.place(x=530, y=275)
 once = True
+
 def yearLength(*args):
     global once
-
     # validate just numbers
     if (not entry_year_2.get().isnumeric()):
         entry_year_2.delete(len(entry_year_2.get()) - 1, len(entry_year_2.get()))
@@ -386,6 +409,7 @@ def buttonAddFilm():
 
     # for update data in Search Films Frame
     search()
+    libs.save_files(films_list, genres_list)
     
 
 
@@ -447,43 +471,35 @@ button_3.place(x=5, y=160)
 label_register_3 = Label(frame3, text="Géneros:", font=("Inter", 30))
 label_register_3.place(x=190, y=30)
 
-#! Variables
-father_genre_3 = "General"
-
-
 tree_genres_3 = ttk.Treeview(frame3, show="tree")
 tree_genres_3.place(x = 190, relwidth=0.6, relheight=0.6, rely=0.22)
 
 def mapTreeView():
-    repeated_genres = []
-    repeated_sub_genres = []
-    item_father = tree_genres_3.insert('', 'end', text=father_genre_3, open=True)
-    for i in range(len(genres_list)):
-        if(genres_list[i][1] == father_genre_3): tree_genres_3.insert(item_father, 'end', text=genres_list[i][0])
-        elif(genres_list[i][1] not in repeated_genres):
-            item = tree_genres_3.insert(item_father, 'end', text=genres_list[i][1], open=True)
-            repeated_genres.append(genres_list[i][1])
-            for j in range(len(genres_list[i])):
-                tree_genres_3.insert(item, 'end', text=genres_list[i][j])
-                repeated_sub_genres.append(genres_list[i][j])
+    dicc = {}
+    item_father = tree_genres_3.insert('', 'end', text=father_genre, open=True)
+    for g in genres_list:
+        if(g[1] not in dicc.keys()):
+            dicc[g[1]] = []
+            for j in genres_list:
+                if (j[1] == g[1] and j[0] not in dicc[g[1]]):
+                    if (g[1] in dicc["General"] and libs.getSubGenre(genres_list, g[1])):
+                        dicc["General"].remove(g[1])
+                    dicc[g[1]].append(j[0])
+
+    for key in dicc:
+        if(key == father_genre):
+            for genre in dicc[key]:
+                item = tree_genres_3.insert(item_father, 'end', text=genre, open=True)
+        else:
+            item = tree_genres_3.insert(item_father, 'end', text=key, open=True)
+            for genre in dicc[key]:
+                tree_genres_3.insert(item, 'end', text=genre)
 mapTreeView()
+
 def deleteTreeView():
     global tree_genres_3
     for item in tree_genres_3.get_children():
         tree_genres_3.delete(item)
-    #mapTreeView()
-#deleteTreeView()
-
-
-# List of Genres
-#list_box_3 = Listbox(frame3, listvariable=genres_view)
-#list_box_3.place(x = 190, y = 165, relwidth=0.575, relheight=0.5)
-
-# text
-"""
-texto_2 = Text(frame3, width=50, height=12, font=("Inter", 15))
-texto_2.place(x=190, y=100)
-"""
 
 
 
@@ -536,56 +552,93 @@ button_3 = Button(frame4, text="Añadir Pélicula", font=(
     "Inter", 15), width=13, height=1, command=buttonFilmRegister)
 button_3.place(x=5, y=160)
 
-#Texto de registro
+# Text Genre Register
 label_register_4 = Label(frame4, text="Registro de Géneros:", font=("Inter", 30))
 label_register_4.place(x=190, y=30)
 
 # Variables
 genre_4 = StringVar();genre_4.set("Géneros")
-subgenre_name_4 = StringVar()
+sub_genre_name_4 = StringVar()
 
 genres_4 = []
 
 # text genre
 label_genre_4 = Label(frame4, text="Genero al que pertenece:", font=("Inter", 15))
 label_genre_4.place(x=190, y=125)
-#? Map genres
+
+temp_genres_4 = []
 for i in range(len(genres_list)):
-    #elif for just see sub-genres (NOT GENERAL)
-    if (genres_list[i][0] not in genres_4):
-        genres_4.append(genres_list[i][0])
-    elif (genres_list[i][1] not in genres_4):
-        genres_4.append(genres_list[i][1])
-op_menu_genre_4 = OptionMenu(frame4, genre_4, *(genres_4))
+    if (genres_list[i][1] not in temp_genres_4):
+        temp_genres_4.append(genres_list[i][1])
+    if (genres_list[i][1] == father_genre):
+        temp_genres_4.append(genres_list[i][0])
+op_menu_genre_4 = OptionMenu(frame4, genre_4, *(temp_genres_4))
 op_menu_genre_4.place(x = 550, y = 125)
 
-#texto del subgenre
-label_subgenres_4 = Label(frame4, text="Nombre del sub genero:", font=("Inter", 15))
-label_subgenres_4.place(x=190, y=190)
-entry_subgenres_2 = Entry(frame4, textvariable=subgenre_name_4 , bd=4, font=("Inter"), justify="center", width=25)
-entry_subgenres_2.place(x=450, y=190)
+#? Map genres
+def mapGenre4():
+    global genres_list, op_menu_genre_4, genre_4
+    genres_local = []
+
+    for i in range(len(genres_list)):
+        if (genres_list[i][1] not in genres_local):
+            genres_local.append(genres_list[i][1])
+        if (genres_list[i][1] == father_genre):
+            genres_local.append(genres_list[i][0])
+
+    op_menu_genre_4.place_forget()
+    op_menu_genre_4 = OptionMenu(frame4, genre_4, *(genres_local))
+    op_menu_genre_4.place(x = 550, y = 125)
+
+
+# texto del subgenre
+label_sub_genres_4 = Label(frame4, text="Nombre del sub genero:", font=("Inter", 15))
+label_sub_genres_4.place(x=190, y=190)
+entry_sub_genres_4 = Entry(frame4, textvariable=sub_genre_name_4 , bd=4, font=("Inter"), justify="center", width=25)
+entry_sub_genres_4.place(x=450, y=190)
+
+
+# Validate if new genre not have numbers
+def genreType(*args):
+    if(len(entry_sub_genres_4.get()) == 0): pass
+    elif (not entry_sub_genres_4.get()[len(entry_sub_genres_4.get()) - 1].isspace()): pass
+    elif (entry_sub_genres_4.get()[len(entry_sub_genres_4.get()) - 1] == " "): pass
+    elif (not entry_sub_genres_4.get().isalpha()):
+        entry_sub_genres_4.delete(len(entry_sub_genres_4.get()) - 1, len(entry_sub_genres_4.get()))
+        
+sub_genre_name_4.trace("w", genreType)
+
 
 # On Press Button Add genre
-def buttonAddgenres():
-    global  genres_list, genre_4, subgenre_name_4
-    res_4 = libs.add_genre(genres_list.copy(), genre_4.get(), subgenre_name_4.get())
+def buttonAddGenres():
+    global films_list, genres_list, genre_4, sub_genre_name_4
+    res_4 = libs.add_genre(genres_list.copy(), genre_4.get(), sub_genre_name_4.get())
     if (type(res_4) == tuple):
         messagebox.showerror("Error", res_4[1])
     else:
         genres_list = res_4
         messagebox.showinfo("Mensaje", "El genero se ha agregado correctamente.")
 
-    
-    search()
+    #update Genres in others frames
+    mapGenre1()
+    mapGenre2()
+    mapGenre4()
+    deleteTreeView()
+    mapTreeView()
 
 #add genre
-button_add_film_2 = Button(frame4, text="Agregar genero", font=("Inter", 15), width=13, height=1, command=buttonAddgenres)
-button_add_film_2.place(x=468, y=272)
+button_add_genre_4 = Button(frame4, text="Agregar genero", font=("Inter", 15), width=13, height=1, command=buttonAddGenres)
+button_add_genre_4.place(x=468, y=272)
 
 
 
-
-
+def onClosing():
+    question = messagebox.askokcancel("Cerrando", "¿Quieres salir del programa?\n todos tus cambios serán guardados.")
+    if(question): 
+        libs.save_files(films_list, genres_list)
+        root.destroy()
+   
+root.protocol("WM_DELETE_WINDOW", onClosing)
 
 
 def waiting(frame, s):
@@ -602,11 +655,14 @@ def loading(ff, sf, s):
     switchFrame(ff)
 
 
+def error(name, err):
+    messagebox.showerror(name, err)
+
+
 def main():
     loading(loading_frame, first_frame, loading_time)
     root.geometry(f"{width}x{height}+300-150")
     root.resizable(False,False)
-    #root.protocol("WM_DELETE_WINDOW", libs.onClose())
     root.mainloop()
     
 
