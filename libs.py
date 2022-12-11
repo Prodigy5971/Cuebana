@@ -17,7 +17,7 @@ def open_file(path, box):
             l1.append(l2)
         return l1
     except FileNotFoundError:
-        box.showerror("Error", "El archivo no existe.")
+        box.showerror("Error", f"El archivo \"{path}\" no existe.")
 
 
 
