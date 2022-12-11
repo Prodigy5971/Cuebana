@@ -1,6 +1,4 @@
-from pathlib import Path
-import tkinter as tk
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Frame, ttk, Label, StringVar, IntVar, OptionMenu, Listbox, messagebox, BooleanVar
+from tkinter import Tk, Entry, Button, PhotoImage, Frame, ttk, Label, StringVar, IntVar, OptionMenu, Listbox, messagebox
 import time
 import threading
 import libs
