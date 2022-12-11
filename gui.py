@@ -198,19 +198,32 @@ query.trace("w", search)
 
 #films
 list_box = Listbox(frame1, listvariable=searched_films)
+def listBoxCopy(event):
+    selected_indices = list_box.curselection()
+    selected_film = ",".join([list_box.get(i) for i in selected_indices])
+    if(len(selected_film) > 0):
+        message = f"Se ha copiado la película N°{selected_film[0]} - \"{selected_film[4:len(selected_film)-1]}\" en el portapapeles."
+        root.clipboard_clear()
+        root.clipboard_append(selected_film[4:len(selected_film)])
+        messagebox.showinfo("Mensaje", message)
+list_box.bind("<<ListboxSelect>>", listBoxCopy)
 #print(searched_films.get())
 list_box.place(x = 190, y = 165, relwidth=0.575, relheight=0.5)
 
-#texto filtro
+# texto ayuda
+label_help = Label(frame1, text="Haz click en la película que desees para copiar en portapapeles.", font=("Inter", 8), justify="center")
+label_help.place(x = 486, y = 460)
+
+# texto filtro
 label_filter = Label(frame1, text="Buscar por:", font=("Inter", 15), justify="center")
 label_filter.place(x = 660, y = 165)
 
-#option menu score
+# option menu score
 score_options = [1, 2, 3, 4 , 5]
 op_menu_score = OptionMenu(frame1, score, *(score_options))
 score.trace("w", search)
 
-#option menu genre 
+# option menu genre 
 #? Map genres
 genres = []
 for i in range(len(genres_list)):
@@ -326,14 +339,14 @@ genres_2 = []
 label_film_2 = Label(frame2, text="Nombre de película:", font=("Inter", 15))
 label_film_2.place(x=190, y=125)
 # entry film name 
-entry_film_2 = Entry(frame2, textvariable=film_name_2 , bd=4, font=("Inter"), justify="center", width=25)
+entry_film_2 = Entry(frame2, textvariable=film_name_2 , bd=4, font=("Inter"), justify="center", width=28)
 entry_film_2.place(x=450, y=125)
 
 # text director name
 label_director_2 = Label(frame2, text="Nombre del director:", font=("Inter", 15))
 label_director_2.place(x=190, y=175)
 # entry director name
-entry_director_2 = Entry(frame2, textvariable=director_name_2 , bd=4, font=("Inter"), justify="center", width=25)
+entry_director_2 = Entry(frame2, textvariable=director_name_2 , bd=4, font=("Inter"), justify="center", width=28)
 entry_director_2.place(x=450, y=175)
 
 # text genre
@@ -347,7 +360,7 @@ for i in range(len(genres_list)):
     if (genres_list[i][1] not in temp_genres_2 and genres_list[i][1] != father_genre):
         temp_genres_2.append(genres_list[i][1])
 op_menu_genre_2 = OptionMenu(frame2, genre_2, *(temp_genres_2))
-op_menu_genre_2.place(x = 540, y = 225)
+op_menu_genre_2.place(x = 490, y = 225, relwidth=0.25)
 
 #? Map genres
 def mapGenre2():
@@ -362,15 +375,15 @@ def mapGenre2():
 
     op_menu_genre_2.place_forget()
     op_menu_genre_2 = OptionMenu(frame2, genre_2, *(genres_local))
-    op_menu_genre_2.place(x = 540, y = 225)
+    op_menu_genre_2.place(x = 490, y = 225, relwidth=0.25)
 
 
 # text year
 label_year_2 = Label(frame2, text="Año:", font=("Inter", 15))
 label_year_2.place(x=190, y=275)
 #entry year
-entry_year_2 = Entry(frame2, textvariable=year_2 , bd=4, font=("Inter"), justify="center", width=12)
-entry_year_2.place(x=530, y=275)
+entry_year_2 = Entry(frame2, textvariable=year_2 , bd=4, font=("Inter"), justify="center", width=10)
+entry_year_2.place(x=533, y=275)
 once = True
 
 def yearLength(*args):
@@ -395,7 +408,7 @@ label_score_2.place(x=190, y=325)
 #option menu score 1
 score_options_2 = [1, 2, 3, 4 , 5]
 op_menu_score_2 = OptionMenu(frame2, score_2, *(score_options_2))
-op_menu_score_2.place(x = 560, y = 325)
+op_menu_score_2.place(x = 558, y = 325)
 
 # On Press Button Add Film
 def buttonAddFilm():
@@ -573,7 +586,7 @@ for i in range(len(genres_list)):
     if (genres_list[i][1] == father_genre):
         temp_genres_4.append(genres_list[i][0])
 op_menu_genre_4 = OptionMenu(frame4, genre_4, *(temp_genres_4))
-op_menu_genre_4.place(x = 550, y = 125)
+op_menu_genre_4.place(x = 460, y = 125, relwidth=0.25)
 
 #? Map genres
 def mapGenre4():
@@ -588,14 +601,14 @@ def mapGenre4():
 
     op_menu_genre_4.place_forget()
     op_menu_genre_4 = OptionMenu(frame4, genre_4, *(genres_local))
-    op_menu_genre_4.place(x = 550, y = 125)
+    op_menu_genre_4.place(x = 460, y = 125, relwidth=0.25)
 
 
 # texto del subgenre
 label_sub_genres_4 = Label(frame4, text="Nombre del sub genero:", font=("Inter", 15))
 label_sub_genres_4.place(x=190, y=190)
-entry_sub_genres_4 = Entry(frame4, textvariable=sub_genre_name_4 , bd=4, font=("Inter"), justify="center", width=25)
-entry_sub_genres_4.place(x=450, y=190)
+entry_sub_genres_4 = Entry(frame4, textvariable=sub_genre_name_4 , bd=4, font=("Inter"), justify="center", width=30)
+entry_sub_genres_4.place(x=460, y=190)
 
 
 # Validate if new genre not have numbers
@@ -628,7 +641,7 @@ def buttonAddGenres():
 
 #add genre
 button_add_genre_4 = Button(frame4, text="Agregar genero", font=("Inter", 15), width=13, height=1, command=buttonAddGenres)
-button_add_genre_4.place(x=468, y=272)
+button_add_genre_4.place(x=530, y=272)
 
 
 
